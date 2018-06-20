@@ -46,8 +46,26 @@ App = {
       electionInstance = instance;
       electionInstance.candidatesCount().then(function(count) {
         $('#candidate-count').html("Number of candidates competing: " + count);
+        
+        for (var candidateCountIndex = 1; candidateCountIndex <= count; candidateCountIndex++ ) {
+          console.log(candidateCountIndex);
+          electionInstance.candidates(candidateCountIndex).then(function(candidate) {
+            console.log(candidate[0].toNumber());
+            console.log(candidate[1]);
+            console.log(candidate[2].toNumber());
+            var table_content = "<tr>\
+              <th scope='row'>" + candidate[0].toNumber() + "</th>\
+                <td>" + candidate[1] + "</td>\
+                <td>" + candidate[2].toNumber() + "</td>\
+              </tr>"
+            $('#voting-status').append(table_content)
+          });
+        }
+
+        loader.hide();
         content.show();
-      }).catch(function(error) {
+      })
+      .catch(function(error) {
         console.warn(error);
       });
     })
