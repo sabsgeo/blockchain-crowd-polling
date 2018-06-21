@@ -33,7 +33,6 @@ App = {
     App.contracts.Election.deployed().then(function(instance) {
       instance.VoteSuccess({}, {fromBlock: 0, toBlock: 'latest'}).watch(function(error, result) {
         if (!error) {
-          console.log('Voting Success')
           App.render();
         }
       });
@@ -58,27 +57,25 @@ App = {
         $('#candidate-count').html("Number of candidates competing: " + count);
         
         var thenLoopCount = 0;
-        for (var candidateCountIndex = 1; candidateCountIndex <= count; candidateCountIndex++ ) {
-
+        var tableContent = "";
+        var selectContent = "";
+        for (var candidateCountIndex = 1; candidateCountIndex <= count.toNumber(); candidateCountIndex++ ) {
           electionInstance.candidates(candidateCountIndex).then(function(candidate) {
-            if (thenLoopCount == 0) {
-              $('#voting-status').empty();
-              $('#candidates-select').empty();
-            }
             thenLoopCount++;
 
-            var tableContent = "<tr>\
+            tableContent += "<tr>\
               <th scope='row'>" + candidate[0].toNumber() + "</th>\
                 <td>" + candidate[1] + "</td>\
                 <td>" + candidate[2].toNumber() + "</td>\
-              </tr>"
-            $('#voting-status').append(tableContent)
-
-            var selectContent = "<option value='" + candidate[0].toNumber() + "'>" + candidate[1] + "</option>";
-            $('#candidates-select').append(selectContent);
+              </tr>";
+            selectContent += "<option value='" + candidate[0].toNumber() + "'>" + candidate[1] + "</option>";
+            
+            if (thenLoopCount === count.toNumber()) {
+              $('#voting-status').html(tableContent);
+              $('#candidates-select').html(selectContent);
+            }
           });
         }
-
         return electionInstance.voters(App.account);
       }).then(function(voteStatus) {
         $("#loader").hide();
