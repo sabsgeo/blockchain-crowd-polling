@@ -15,10 +15,9 @@ contract Election {
     
     event VoteSuccess(uint _candidateId);
     
-    function Election() public {
+    constructor () public {
         addCandidate("Candidate 1");
         addCandidate("Candidate 2");
-    
     }
 
     function vote(uint _candidateId) public {
