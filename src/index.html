@@ -57,6 +57,16 @@
                 </tr> -->
               </tbody>
             </table>
+
+            <form onSubmit="App.castVote(); return false;">
+              <div class="form-group">
+                <label for="candidates-select">Select Candidate</label>
+                <select class="form-control" id="candidates-select">
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Vote</button>
+              <hr />
+            </form>
             
           </div>
         </div>

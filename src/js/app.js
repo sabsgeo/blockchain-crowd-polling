@@ -53,23 +53,37 @@ App = {
             console.log(candidate[0].toNumber());
             console.log(candidate[1]);
             console.log(candidate[2].toNumber());
-            var table_content = "<tr>\
+            var tableContent = "<tr>\
               <th scope='row'>" + candidate[0].toNumber() + "</th>\
                 <td>" + candidate[1] + "</td>\
                 <td>" + candidate[2].toNumber() + "</td>\
               </tr>"
-            $('#voting-status').append(table_content)
+            $('#voting-status').append(tableContent)
+
+            var selectContent = "<option value='" + candidate[0].toNumber() + "'>" + candidate[1] + "</option>";
+            $('#candidates-select').append(selectContent)
           });
         }
 
-        loader.hide();
-        content.show();
+        return electionInstance.voters(App.account);
+      }).the(function(voteStatus) {
+        if(voteStatus) {
+          $('form').hide();
+          loader.hide();
+          content.show();
+        }
       })
       .catch(function(error) {
         console.warn(error);
       });
     })
   },
+  castVote: function() {
+    var candidateId = $('#candidates-select').val();
+    App.contracts.Election.deployed().then(function(instance) {
+      instance.vote(candidateId, {from: App.account});
+    });
+  }
 
 };
 
