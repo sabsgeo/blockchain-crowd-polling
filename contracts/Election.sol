@@ -12,7 +12,9 @@ contract Election {
     mapping (address => bool) public voters;
     mapping (uint => Candidate) public candidates;
     uint public candidatesCount;
-
+    
+    event VoteSuccess(uint _candidateId);
+    
     function Election() public {
         addCandidate("Candidate 1");
         addCandidate("Candidate 2");
@@ -24,6 +26,7 @@ contract Election {
         require(_candidateId > 0 && _candidateId <= candidatesCount);
         candidates[_candidateId].voteCount++;
         voters[msg.sender] = true;
+        VoteSuccess(_candidateId);
     }
 
     function addCandidate(string _name) private {
