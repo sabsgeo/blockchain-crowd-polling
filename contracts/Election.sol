@@ -26,7 +26,7 @@ contract Election {
         require(_candidateId > 0 && _candidateId <= candidatesCount);
         candidates[_candidateId].voteCount++;
         voters[msg.sender] = true;
-        VoteSuccess(_candidateId);
+        emit VoteSuccess(_candidateId);
     }
 
     function addCandidate(string _name) private {

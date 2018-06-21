@@ -31,19 +31,19 @@ App = {
   },
   votingSuccessEvent: function() {
     App.contracts.Election.deployed().then(function(instance) {
-      instance.VoteSuccess({}, { fromBlock: 0, toBlock: 'latest'}).watch(function() {
-        console.log('Voting Success')
-        App.render();
+      instance.VoteSuccess({}, {fromBlock: 0, toBlock: 'latest'}).watch(function(error, result) {
+        if (!error) {
+          console.log('Voting Success')
+          App.render();
+        }
       });
     });
   },
   render: function() {
     var electionInstance;
-    var loader = $("#loader");
-    var content = $("#content");
     
-    loader.show();
-    content.hide();
+    $("#loader").show();
+    $("#content").hide();
 
     web3.eth.getCoinbase(function(err, account) {
       if (err === null) {
@@ -55,15 +55,18 @@ App = {
     App.contracts.Election.deployed().then(function(instance) {
       electionInstance = instance;
       electionInstance.candidatesCount().then(function(count) {
-        $('#voting-status').empty();
-        $('#candidates-select').empty();
         $('#candidate-count').html("Number of candidates competing: " + count);
         
+        var thenLoopCount = 0;
         for (var candidateCountIndex = 1; candidateCountIndex <= count; candidateCountIndex++ ) {
+
           electionInstance.candidates(candidateCountIndex).then(function(candidate) {
-            console.log(candidate[0].toNumber());
-            console.log(candidate[1]);
-            console.log(candidate[2].toNumber());
+            if (thenLoopCount == 0) {
+              $('#voting-status').empty();
+              $('#candidates-select').empty();
+            }
+            thenLoopCount++;
+
             var tableContent = "<tr>\
               <th scope='row'>" + candidate[0].toNumber() + "</th>\
                 <td>" + candidate[1] + "</td>\
@@ -78,8 +81,8 @@ App = {
 
         return electionInstance.voters(App.account);
       }).then(function(voteStatus) {
-        loader.hide();
-        content.show();
+        $("#loader").hide();
+        $("#content").show();
         if(voteStatus) {
           $('form').hide();
         }
@@ -94,8 +97,8 @@ App = {
     App.contracts.Election.deployed().then(function(instance) {
       return instance.vote(candidateId, {from: App.account});
     }).then(function() {
-      loader.show();
-      content.hide();
+      $("#loader").show();
+      $("#content").hide();
     }).catch(function(error) {
       console.warn(error);
     });
