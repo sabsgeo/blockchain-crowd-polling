@@ -43,8 +43,9 @@ contract QuestionsAndAnswers {
 
     function getQuestionPoll(uint _questionId) public {
         allQuestions[_questionId];
+        mapping (string => uint) answerPoll;
         for (uint i = 0; i < allUserResponses[_questionId].userAddress.length; i++) {
-            allUserResponses[_questionId].userAnswers[allUserResponses[_questionId].userAddress[i]];
+            answerPoll[allUserResponses[_questionId].userAnswers[allUserResponses[_questionId].userAddress[i]]]++;
         }
     }
 
