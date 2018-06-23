@@ -12,19 +12,20 @@ contract QuestionsAndAnswers {
 
     // This is the structure of the options of each question
     struct Options {
-        mapping ( uint => string) options;
+        mapping (string => uint) options;
+        mapping (uint => uint) optionPoll;
         uint numberOfOptions;
     }
     
     struct UserResponse {
-        mapping (address => string) userAnswers;
-        address[] userAddress;
+        mapping (address => uint) userAnswers;
     }
     
     mapping (uint => Question) public allQuestions;
     mapping (uint => UserResponse) private allUserResponses;
     mapping (uint => Options) allOptions;
     uint public questionCount;
+    event QuestionPollResult(string _question, uint _userAnswer);
 
     function askQuestion (string _question) public {
         questionCount++;
@@ -33,20 +34,22 @@ contract QuestionsAndAnswers {
 
     function questionOptions(uint _questionId, string _option) public {
         allOptions[_questionId].numberOfOptions++;
-        allOptions[_questionId].options[allOptions[_questionId].numberOfOptions] = _option;
+        allOptions[_questionId].options[_option] = allOptions[_questionId].numberOfOptions;
     }
 
     function answerQuestion(uint _questionId, string _answer) public {
-        allUserResponses[_questionId].userAnswers[msg.sender] = _answer;
-        allUserResponses[_questionId].userAddress.push(msg.sender);
+        // allOptions[_questionId].options[_answer]
+        allOptions[_questionId].optionPoll[allOptions[_questionId].options[_answer]]++;
+        allUserResponses[_questionId].userAnswers[msg.sender] = allOptions[_questionId].options[_answer];
+        // [_questionId].userAddress.push(msg.sender);
     }
 
     function getQuestionPoll(uint _questionId) public {
-        allQuestions[_questionId];
-        mapping (string => uint) answerPoll;
-        for (uint i = 0; i < allUserResponses[_questionId].userAddress.length; i++) {
-            answerPoll[allUserResponses[_questionId].userAnswers[allUserResponses[_questionId].userAddress[i]]]++;
-        }
+        // allOptions[_questionId].options, allOptions[_questionId].optionPoll
+        //  allUserResponses[_questionId].userAnswers[msg.sender]
+        // return allQuestions[_questionId].question;
+        emit QuestionPollResult(allQuestions[_questionId].question, allUserResponses[_questionId].userAnswers[msg.sender]);
+        // emit QuestionPollResult(allQuestions[_questionId].question);
     }
 
 }
