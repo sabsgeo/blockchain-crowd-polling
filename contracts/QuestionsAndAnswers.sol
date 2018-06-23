@@ -13,6 +13,7 @@ contract QuestionsAndAnswers {
     // This is the structure of the options of each question
     struct Options {
         mapping (string => uint) options;
+        mapping (uint => string) optionsReverse;        
         mapping (uint => uint) optionPoll;
         uint numberOfOptions;
     }
@@ -35,6 +36,7 @@ contract QuestionsAndAnswers {
     function questionOptions(uint _questionId, string _option) public {
         allOptions[_questionId].numberOfOptions++;
         allOptions[_questionId].options[_option] = allOptions[_questionId].numberOfOptions;
+        allOptions[_questionId].optionsReverse[allOptions[_questionId].numberOfOptions] = _option;
     }
 
     function answerQuestion(uint _questionId, string _answer) public {
@@ -44,11 +46,21 @@ contract QuestionsAndAnswers {
         // [_questionId].userAddress.push(msg.sender);
     }
 
-    function getQuestionPoll(uint _questionId) public {
+    function getQuestionPoll(uint _questionId) public returns (string, uint, string[], uint[]) {
         // allOptions[_questionId].options, allOptions[_questionId].optionPoll
         //  allUserResponses[_questionId].userAnswers[msg.sender]
         // return allQuestions[_questionId].question;
-        emit QuestionPollResult(allQuestions[_questionId].question, allUserResponses[_questionId].userAnswers[msg.sender]);
+        string[] storage questionOptions;
+        uint[] storage questionPoll;
+        for (uint optionsIndex = 1; optionsIndex <= allOptions[_questionId].numberOfOptions; optionsIndex++) {
+            questionOptions.push(allOptions[_questionId].optionsReverse[optionsIndex]);
+            questionPoll.push(allOptions[_questionId].optionPoll[optionsIndex]);
+        }
+        return (allQuestions[_questionId].question,
+        allUserResponses[_questionId].userAnswers[msg.sender],
+        questionOptions,
+        questionPoll);
+        //emit QuestionPollResult(allQuestions[_questionId].question, allUserResponses[_questionId].userAnswers[msg.sender]);
         // emit QuestionPollResult(allQuestions[_questionId].question);
     }
 
