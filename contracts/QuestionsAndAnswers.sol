@@ -46,22 +46,20 @@ contract QuestionsAndAnswers {
         // [_questionId].userAddress.push(msg.sender);
     }
 
-    function getQuestionPoll(uint _questionId) public returns (string, uint, string[], uint[]) {
-        // allOptions[_questionId].options, allOptions[_questionId].optionPoll
-        //  allUserResponses[_questionId].userAnswers[msg.sender]
-        // return allQuestions[_questionId].question;
-        string[] storage questionOptions;
-        uint[] storage questionPoll;
+    function getQuestionPoll(uint _questionId) public returns (string, uint, bytes32[10], uint[]) {
+        uint[] questionPoll;
+        bytes32[10] bytesArray;
+
         for (uint optionsIndex = 1; optionsIndex <= allOptions[_questionId].numberOfOptions; optionsIndex++) {
-            questionOptions.push(allOptions[_questionId].optionsReverse[optionsIndex]);
+            // questionOptions.push(allOptions[_questionId].optionsReverse[optionsIndex]);
+            //bytesArray[optionsIndex] = "allOptions[_questionId].optionsReverse[optionsIndex]"; 
+            bytesArray[optionsIndex] = "ABCDEFGHdlhkukkkkkkkIJKubjkffghh";
             questionPoll.push(allOptions[_questionId].optionPoll[optionsIndex]);
         }
         return (allQuestions[_questionId].question,
         allUserResponses[_questionId].userAnswers[msg.sender],
-        questionOptions,
+        bytesArray,
         questionPoll);
-        //emit QuestionPollResult(allQuestions[_questionId].question, allUserResponses[_questionId].userAnswers[msg.sender]);
-        // emit QuestionPollResult(allQuestions[_questionId].question);
     }
 
 }
