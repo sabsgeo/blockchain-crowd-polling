@@ -46,14 +46,23 @@ contract QuestionsAndAnswers {
         // [_questionId].userAddress.push(msg.sender);
     }
 
+    function stringToBytes32(string memory source) private returns (bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {
+            result := mload(add(source, 32))
+        }
+    }
+
     function getQuestionPoll(uint _questionId) public returns (string, uint, bytes32[10], uint[]) {
         uint[] questionPoll;
         bytes32[10] bytesArray;
 
         for (uint optionsIndex = 1; optionsIndex <= allOptions[_questionId].numberOfOptions; optionsIndex++) {
-            // questionOptions.push(allOptions[_questionId].optionsReverse[optionsIndex]);
-            //bytesArray[optionsIndex] = "allOptions[_questionId].optionsReverse[optionsIndex]"; 
-            bytesArray[optionsIndex] = "ABCDEFGHdlhkukkkkkkkIJKubjkffghh";
+            bytesArray[optionsIndex] = stringToBytes32(allOptions[_questionId].optionsReverse[optionsIndex]); 
             questionPoll.push(allOptions[_questionId].optionPoll[optionsIndex]);
         }
         return (allQuestions[_questionId].question,
